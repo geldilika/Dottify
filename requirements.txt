@@ -3,3 +3,4 @@ Pillow
 djangorestframework
 data-wizard
 crispy-bootstrap5
+drf-nested-routers
