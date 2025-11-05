@@ -1,9 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 
 from .forms import AlbumForm, SongForm
 from .models import Album, Song, Playlist, DottifyUser
@@ -19,25 +20,30 @@ def is_artist(user):
 
 def home(request):
     user = request.user
-
-    albums = Album.objects.all()
-    playlists = Playlist.objects.filter(visibility=2)
+    albums = None
+    playlists = None
     songs = None
 
-    if user.is_authenticated:
-        playlists = Playlist.objects.filter(owner__user = user)
+    if not user.is_authenticated:
+        playlists = Playlist.objects.filter(visibility=2)
+        return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
 
-        if user.groups.filter(name="Artist").exists():
-            albums = Album.objects.filter(artist_account__user = user)
+    if not (is_artist(user) or is_admin(user)):
+        playlists = Playlist.objects.filter(owner__user=user)
+        return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
 
-        if is_admin(user):
-            albums = Album.objects.all()
-            playlists = Playlist.objects.all()
-            songs = Song.objects.all()
-    
-    return render(request, "home.html", {
-        "albums": albums, "playlists": playlists, "songs": songs,
-    })
+    if is_artist(user) and not is_admin(user):
+        albums = Album.objects.filter(artist_account__user=user)
+        return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
+
+    if is_admin(user):
+        albums = Album.objects.all()
+        playlists = Playlist.objects.all()
+        songs = Song.objects.all()
+        return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
+
+    playlists = Playlist.objects.filter(owner__user=user)
+    return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
 
 @login_required
 def album_search(request):
@@ -185,4 +191,28 @@ class SongDeleteView(LoginRequiredMixin, DeleteView):
                 return super().dispatch(request, *args, **kwargs)
         return HttpResponseForbidden("You cant delete this Song")
 
- 
+class UserRedirectView(DetailView):
+    model = DottifyUser
+    def get(self, request, pk):
+        profile = get_object_or_404(DottifyUser, pk=pk)
+        return redirect("user_detail", pk=pk, display_slug=slugify(profile.display_name))
+    
+class UserDetailView(DetailView):
+    model = DottifyUser
+    template_name = "user_detail.html"
+    context_object_name = "profile"
+
+    def get_object(self, queryset = None):
+        return get_object_or_404(DottifyUser, pk=self.kwargs["pk"])
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        correct = slugify(self.object.display_name)
+        if self.kwargs.get("display_slug") != correct:
+            return redirect("user_detail", pk=self.object.pk, display_slug=correct)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["playlists"] = Playlist.objects.filter(owner=self.object)
+        return ctx
