@@ -71,7 +71,7 @@ class ProvidedTestSheetC(TestCase):
     # to do this as the test component of Sheet D. Further tests will only
     # check your URL configuration. You should check the content of your views.
     def test_album_search_view_allows_logged_in_users(self):
-        self.client.login(username='alice', password='pw123')
+        self.client.login(username='annie', password='pw123')
         response = self.client.get('/albums/search/?q=Christmas%20Hits')
         self.client.logout()
         self.assertEqual(response.status_code, 200)
