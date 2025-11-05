@@ -44,7 +44,7 @@ class ProvidedTestSheetB(APITestCase):
         self.s1_id = s1.id
         self.s2_id = s2.id
         self.p_id = p.id
-        self.dottify_user_id = dottify_user
+        self.dottify_user_id = dottify_user.id
 
 
     def tearDown(self):
