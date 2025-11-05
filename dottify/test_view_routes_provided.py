@@ -59,13 +59,13 @@ class ProvidedTestSheetC(TestCase):
         # User is not logged in for this test, so it should list albums
         # and public playlists.
         response = self.client.get('/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Work Jams 2')
         self.assertContains(response, 'Greatest Hits')
 
     def test_album_search_view_not_public(self):
         response = self.client.get('/albums/search/?q=Christmas%20Hits')
-        self.assertEquals(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
 
     # We will NOT provide any further tests for authentication -- you will need
     # to do this as the test component of Sheet D. Further tests will only
@@ -74,7 +74,7 @@ class ProvidedTestSheetC(TestCase):
         self.client.login(username='alice', password='pw123')
         response = self.client.get('/albums/search/?q=Christmas%20Hits')
         self.client.logout()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_album_create_view_exists(self):
         response = self.client.get('/albums/new/')
