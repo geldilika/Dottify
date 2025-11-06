@@ -1,4 +1,3 @@
-# COM2042 Lab Assignments Repo
 
 ## Getting started
 - Navigate to the repo folder after cloning it
