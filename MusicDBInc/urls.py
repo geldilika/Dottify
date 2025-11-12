@@ -27,5 +27,7 @@ urlpatterns = [
     path('datawizard/', include('data_wizard.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('dottify.urls')),
+    path('accounts/', include("django.contrib.auth.urls")),
+    path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

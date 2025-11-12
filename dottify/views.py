@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required_401
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.http import HttpResponse, HttpResponseForbidden
@@ -45,8 +45,10 @@ def home(request):
     playlists = Playlist.objects.filter(owner__user=user)
     return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
 
-@login_required_401
+@login_required
 def album_search(request):
+    if not request.user.is_authenticated:
+        return HttpResponse(status = 401)
     q = request.GET.get("q", "").strip()
     if q == "":
         albums = Album.objects.all()
