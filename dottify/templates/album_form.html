@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<h1> Album Form </h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table>
+        {{ form }}
+    </table>
+    <button type="submit">Save</button>
+</form>

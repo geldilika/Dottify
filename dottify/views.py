@@ -25,6 +25,7 @@ def home(request):
     songs = None
 
     if not user.is_authenticated:
+        albums = Album.objects.all()
         playlists = Playlist.objects.filter(visibility=2)
         return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
 
@@ -45,7 +46,6 @@ def home(request):
     playlists = Playlist.objects.filter(owner__user=user)
     return render(request, "home.html", {"albums": albums, "playlists": playlists, "songs": songs})
 
-@login_required
 def album_search(request):
     if not request.user.is_authenticated:
         return HttpResponse(status = 401)
@@ -78,7 +78,7 @@ class AlbumCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
     
     def get_success_url(self):
-        return reverse("album_detail", kwargs={"pk": self.pk})
+        return reverse("album_detail", kwargs={"pk": self.object.pk})
 
 def album_detail(request, pk, slug=None):
     album = get_object_or_404(Album, pk=pk)
@@ -103,7 +103,7 @@ class AlbumUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("album_detail", args=[self.object.pk])
 
-class AlbumDeleteView(DeleteView, LoginRequiredMixin):
+class AlbumDeleteView(LoginRequiredMixin, DeleteView):
     model = Album
     template_name = "album_delete.html"
     success_url = reverse_lazy("home")
@@ -180,7 +180,7 @@ class SongDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("home")
 
     def dispatch(self, request, *args, **kwargs):
-        object = self.get_object()
+        self.object = self.get_object()
         user = self.request.user
 
         if is_admin(user):

@@ -1,0 +1,30 @@
+<!doctype html>
+<h1>Home</h1>
+
+{% if albums %}
+<h2>Albums</h2>
+<ul>
+  {% for a in albums %}
+    <li><a href="/albums/{{ a.id }}/">{{ a.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if playlists %}
+<h2>Playlists</h2>
+<ul>
+  {% for p in playlists %}
+    <li>{{ p.name }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if songs %}
+<h2>Songs</h2>
+<ul>
+  {% for s in songs %}
+    <li><a href="/songs/{{ s.id }}/">{{ s.title }}</a> ({{ s.album.title }})</li>
+  {% endfor %}
+</ul>
+{% endif %}
+

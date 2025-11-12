@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<h1> {{ album.title }} </h1>
+<h2> Songs </h2>
+<ul>
+    {% for s in songs %}
+    <li>
+        <a href="/songs/{{ s.id }}/">{{ s.title }}</a>
+    </li>
+    {% endfor %}
+</ul>

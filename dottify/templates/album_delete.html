@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<h1> Delete Album </h1>
+<p>
+    Delete {{ object.title }}
+</p>
+<form method = "post">
+    {% csrf_token %}
+    <button type="submit"> Confirm delete</button>
+</form>
