@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -5,9 +6,10 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse, reverse_lazy
 from django.utils.text import slugify
+from django.utils import timezone
 
 from .forms import AlbumForm, SongForm
-from .models import Album, Song, Playlist, DottifyUser
+from .models import Album, Song, Playlist, DottifyUser, Rating, Comment
 
 # Create your views here.
 
@@ -83,12 +85,42 @@ class AlbumCreateView(LoginRequiredMixin, CreateView):
 def album_detail(request, pk, slug=None):
     album = get_object_or_404(Album, pk=pk)
     songs = album.songs.all()
-    return render(request, "album_detail.html", {"album": album, "songs": songs})
+    comments = Comment.objects.filter(album=album).select_related("user")
+    ratings = Rating.objects.filter(album=album)
+
+    total_alltime = 0
+    count_alltime = 0
+    for r in ratings:
+        total_alltime += float(r.stars)
+        count_alltime += 1
+    
+    if count_alltime > 0:
+        average_alltime = total_alltime / count_alltime
+    else:
+        average_alltime = 0
+    average_alltime_str = f"{average_alltime:.1f}"
+
+    cutoff = timezone.now() - timedelta(days=30)
+    total_recent = 0
+    count_recent = 0
+    for r in ratings:
+        if r.created_at >= cutoff:
+            total_recent += float(r.stars)
+            count_recent += 1
+
+    if count_recent > 0:
+        average_recent = total_recent / count_recent
+    else:
+        average_recent = 0.0
+    average_recent_str = f"{average_recent:.1f}"
+
+    return render(request, "album_detail.html", {"album": album, "songs": songs, "comments": comments,
+    "average_alltime_str": average_alltime_str, "average_recent_str": average_recent_str})
 
 class AlbumUpdateView(LoginRequiredMixin, UpdateView):
     model = Album
     form_class = AlbumForm
-    template_name = "album_form.html"
+    template_name = "dottify/album_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -121,7 +153,7 @@ class AlbumDeleteView(LoginRequiredMixin, DeleteView):
 class SongCreateView(LoginRequiredMixin, CreateView):
     model = Song
     form_class = SongForm
-    template_name = "song_form.html"
+    template_name = "dottify/song_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -151,7 +183,7 @@ class SongDetailView(DetailView):
 class SongUpdateView(LoginRequiredMixin, UpdateView):
     model = Song
     form_class = SongForm
-    template_name = "song_form.html"
+    template_name = "dottify/song_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -159,7 +191,8 @@ class SongUpdateView(LoginRequiredMixin, UpdateView):
             return HttpResponseForbidden("You must be an artist or DottifyAdmin")
         self.object = self.get_object()
         if is_artist(user) and not is_admin(user):
-            if not self.object.album or not self.object.artist_account or self.object.artist_account.user_id != user.id:
+            album = self.object.album
+            if not album or not album.artist_account or album.artist_account.user_id != user.id:
                 return HttpResponseForbidden("You are not allowed to edit this song")
         return super().dispatch(request, *args, **kwargs)
     
@@ -176,7 +209,7 @@ class SongUpdateView(LoginRequiredMixin, UpdateView):
     
 class SongDeleteView(LoginRequiredMixin, DeleteView):
     model = Song
-    template_name = "song_delete.html"
+    template_name = "dottify/song_delete.html"
     success_url = reverse_lazy("home")
 
     def dispatch(self, request, *args, **kwargs):
@@ -185,8 +218,10 @@ class SongDeleteView(LoginRequiredMixin, DeleteView):
 
         if is_admin(user):
             return super().dispatch(request, *args, **kwargs)
+        
         if is_artist(user):
-            if object.artist_account and object.artist_account.user_id != user.id:
+            album = self.object.album
+            if album and album.artist_account and album.artist_account.user_id == user.id:
                 return super().dispatch(request, *args, **kwargs)
         return HttpResponseForbidden("You cant delete this Song")
     

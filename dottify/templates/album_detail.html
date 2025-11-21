@@ -8,3 +8,18 @@
     </li>
     {% endfor %}
 </ul>
+<h2>Ratings</h2>
+<p>Average rating of all time: {{ avg_all_str }}</p>
+<p>Recent rating average (last 30 days): {{ avg_recent_str }}</p>
+
+<h2>Comments</h2>
+<ul>
+  {% for comment in comments %}
+    <li>
+      <strong>{{ comment.user.display_name }}</strong>:
+      {{ comment.comment_text }}
+    </li>
+  {% empty %}
+    <li>No comments for this album.</li>
+  {% endfor %}
+</ul>

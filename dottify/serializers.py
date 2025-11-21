@@ -1,6 +1,7 @@
 # Write your API serialisers here.
 
 from rest_framework import serializers
+from data_wizard import register
 from .models import Album, Song, Playlist
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -9,8 +10,9 @@ class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = [
-            "id", "title", "artist_name", "retail_price", "format", "release_date", "slug", "cover_image", "song_set"
+            "id", "title", "artist_name", "retail_price", "format", "release_date", "slug", "cover_image", "song_set",
         ]
+        read_only_fields = ["slug"]
     
     def get_song_set(self, obj):
         titles = []
@@ -22,7 +24,7 @@ class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = [
-            "id", "title", "length", "album"
+            "id", "title", "length", "album",
         ]
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -33,5 +35,25 @@ class PlaylistSerializer(serializers.ModelSerializer):
         model = Playlist
         fields = [
             "id", "name", "created_at", "visibility", "owner", "songs"
-        ]
+            ]
+        read_only_fields = ["created_at", "visibility", "owner", "songs"]
+
+class AlbumImportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Album
+        fields = ["title", "format", "artist_name", "release_date", "retail_price"]
+
+
+class SongImportSerializer(serializers.ModelSerializer):
+    album_title = serializers.SlugRelatedField(
+        slug_field="title",
+        source="album",
+        queryset=Album.objects.all(),
+        write_only=True,
+        required=True,
+    )
+
+    class Meta:
+        model = Song
+        fields = ["title", "length", "album_title"]
 

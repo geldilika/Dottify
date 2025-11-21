@@ -19,8 +19,10 @@ class SongViewSet(viewsets.ModelViewSet):
     serializer_class = SongSerializer
 
 class PlaylistViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Playlist.objects.filter(visibility = 2)
     serializer_class = PlaylistSerializer
+
+    def get_queryset(self):
+        return Playlist.objects.filter(visibility = 2)
 
 class NestedSongViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SongSerializer
@@ -38,6 +40,7 @@ class StatisticsAPIView(APIView):
         for song in Song.objects.all():
             total += song.length
             count += 1
+            
         if count > 0:
             average_len = total / count
         else:

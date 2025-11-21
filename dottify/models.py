@@ -53,6 +53,7 @@ class Song(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields = ["album", "title"], name = "unique_album_title")]
+        ordering = ["position"]
 
     def save(self, *args, **kwargs):
         if self.pk is None and self.position is None:
@@ -83,6 +84,11 @@ class DottifyUser(models.Model):
 
 class Rating(models.Model):
     stars = models.DecimalField(max_digits = 2, decimal_places = 1, validators = [MinValueValidator(Decimal("0.0")), MaxValueValidator(Decimal("5.0")), validate_rating])
+    album = models.ForeignKey("Album", on_delete=models.CASCADE, related_name="ratings", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
 class Comment(models.Model):
     comment_text = models.CharField(max_length = 800)
+    album = models.ForeignKey("Album", on_delete = models.CASCADE, related_name="comments", null = True, blank = True)
+    user = models.ForeignKey("DottifyUser", on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
+

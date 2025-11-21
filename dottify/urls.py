@@ -12,9 +12,9 @@ from .views import home, album_search, album_detail, AlbumCreateView, AlbumUpdat
 
 
 router = routers.DefaultRouter()
-router.register(r'albums', AlbumViewSet)
-router.register(r'songs', SongViewSet)
-router.register(r'playlists', PlaylistViewSet)
+router.register(r'albums', AlbumViewSet, basename="album")
+router.register(r'songs', SongViewSet, basename="song")
+router.register(r'playlists', PlaylistViewSet, basename="playlist")
 
 album_router = routers.NestedSimpleRouter(router, r'albums', lookup='album')
 album_router.register(r'songs', NestedSongViewSet, basename='album_songs')
@@ -37,8 +37,7 @@ urlpatterns = [
         path("users/<int:pk>/",                        UserRedirectView.as_view(), name="user_redirect"),
         path("users/<int:pk>/<slug:display_slug>/",    UserDetailView.as_view(),   name="user_detail"),
 
+        path("api/statistics/", StatisticsAPIView.as_view(), name="api-statistics"),
         path("api/", include(router.urls)),
         path("api/", include(album_router.urls)),
-        path("api/statistics/", StatisticsAPIView.as_view(), name="statistics"),
 ]
-
