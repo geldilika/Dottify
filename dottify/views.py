@@ -19,7 +19,6 @@ def is_admin(user):
 def is_artist(user):
     return user.is_authenticated and user.groups.filter(name="Artist").exists()
 
-
 def home(request):
     user = request.user
     albums = None
@@ -62,7 +61,7 @@ def album_search(request):
 class AlbumCreateView(LoginRequiredMixin, CreateView):
     model = Album
     form_class = AlbumForm
-    template_name = "dottify/album_form.html"
+    template_name = "album_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -120,7 +119,7 @@ def album_detail(request, pk, slug=None):
 class AlbumUpdateView(LoginRequiredMixin, UpdateView):
     model = Album
     form_class = AlbumForm
-    template_name = "dottify/album_form.html"
+    template_name = "album_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -153,7 +152,7 @@ class AlbumDeleteView(LoginRequiredMixin, DeleteView):
 class SongCreateView(LoginRequiredMixin, CreateView):
     model = Song
     form_class = SongForm
-    template_name = "dottify/song_form.html"
+    template_name = "song_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -183,7 +182,7 @@ class SongDetailView(DetailView):
 class SongUpdateView(LoginRequiredMixin, UpdateView):
     model = Song
     form_class = SongForm
-    template_name = "dottify/song_form.html"
+    template_name = "song_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -209,7 +208,7 @@ class SongUpdateView(LoginRequiredMixin, UpdateView):
     
 class SongDeleteView(LoginRequiredMixin, DeleteView):
     model = Song
-    template_name = "dottify/song_delete.html"
+    template_name = "song_delete.html"
     success_url = reverse_lazy("home")
 
     def dispatch(self, request, *args, **kwargs):

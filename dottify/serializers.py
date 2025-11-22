@@ -37,23 +37,3 @@ class PlaylistSerializer(serializers.ModelSerializer):
             "id", "name", "created_at", "visibility", "owner", "songs"
             ]
         read_only_fields = ["created_at", "visibility", "owner", "songs"]
-
-class AlbumImportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Album
-        fields = ["title", "format", "artist_name", "release_date", "retail_price"]
-
-
-class SongImportSerializer(serializers.ModelSerializer):
-    album_title = serializers.SlugRelatedField(
-        slug_field="title",
-        source="album",
-        queryset=Album.objects.all(),
-        write_only=True,
-        required=True,
-    )
-
-    class Meta:
-        model = Song
-        fields = ["title", "length", "album_title"]
-
