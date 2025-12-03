@@ -1,11 +1,27 @@
 <!doctype html>
 <h1>{{ profile.display_name }}</h1>
-<h2>Playlists</h2>
-<ul>
-  {% for p in playlists %}
-  <li>
-    {{ p.name }}
-</li>
-{% endfor %}
-</ul>
 
+<h2>Playlists</h2>
+{% if playlists %}
+  <ul>
+    {% for p in playlists %}
+      <li>
+        <strong>{{ p.name }}</strong>
+        {% if p.songs.all %}
+          <ul>
+            {% for s in p.songs.all %}
+              <li>
+                <a href="{% url 'song_detail' s.pk %}">{{ s.title }}</a>
+                (from <a href="{% url 'album_detail' s.album.pk %}">{{ s.album.title }}</a>)
+              </li>
+            {% empty %}
+              <li>No songs in this playlist.</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No playlists found.</p>
+{% endif %}

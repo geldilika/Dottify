@@ -1,7 +1,6 @@
 # Write your API serialisers here.
 
 from rest_framework import serializers
-from data_wizard import register
 from .models import Album, Song, Playlist
 
 class AlbumSerializer(serializers.ModelSerializer):

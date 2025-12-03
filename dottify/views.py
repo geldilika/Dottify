@@ -212,8 +212,12 @@ class SongDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("home")
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
         user = self.request.user
+        
+        if not(is_artist(user) or is_admin(user)):
+            return HttpResponseForbidden("You must be an artist or DottifyAdmin")
+        
+        self.object = self.get_object()
 
         if is_admin(user):
             return super().dispatch(request, *args, **kwargs)
@@ -251,3 +255,7 @@ class UserDetailView(DetailView):
         ctx = super().get_context_data(**kwargs)
         ctx["playlists"] = Playlist.objects.filter(owner=self.object)
         return ctx
+    
+def logout(request):
+    logout(request)
+    return redirect('/')

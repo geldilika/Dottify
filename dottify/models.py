@@ -4,20 +4,21 @@ from django.db import models
 
 from django.template.defaultfilters import slugify
 from django.core.exceptions import ValidationError
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from decimal import Decimal
 from django.contrib.auth.models import User
 
 def validate_release_date(value):
-    today = datetime.now().date()
+    today = timezone.now().date()
     if value > today + timedelta(days = 180):
-        raise ValidationError("Release days cant be more than 6 months")
+        raise ValidationError("Release days cant be more than 6 months in the future")
     
 def validate_rating(value):
     v = Decimal(str(value))
     if (v < Decimal("0.0") or v > Decimal("5.0")):
-        raise ValidationError("Starts must be between 0 and 5")
+        raise ValidationError("Stars must be between 0 and 5")
     if (v * 2) % 1 != 0:
         raise ValidationError("Stars must be in increments of 0.5")
     
@@ -91,4 +92,3 @@ class Comment(models.Model):
     comment_text = models.CharField(max_length = 800)
     album = models.ForeignKey("Album", on_delete = models.CASCADE, related_name="comments", null = True, blank = True)
     user = models.ForeignKey("DottifyUser", on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
-

@@ -1,14 +1,18 @@
-<!DOCTYPE html>
-<h1>Album Search</h1>
-<form method="get" action="/albums/search/">
-    <input name="q" value="{{ q|default:'' }}">
-    <button type="submit">Search</button>
-</form>
+<!doctype html>
+<h1>Album search</h1>
+
+
+{% if q %}
+  <p>Results for: {{ q }}</p>
+{% endif %}
 
 <ul>
-    {% for a in albums %}
+  {% for a in albums %}
     <li>
-        <a href="/albums/{{ a.id }}/">{{ a.title }}</a>
+      <a href="{% url 'album_detail' a.id %}">{{ a.title }}</a>
     </li>
-    {% endfor %}
+  {% empty %}
+    <li>No albums found.</li>
+  {% endfor %}
 </ul>
+

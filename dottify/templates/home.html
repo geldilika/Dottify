@@ -1,6 +1,11 @@
 <!doctype html>
 <h1>Home</h1>
 
+<form method="post" action="/accounts/logout/">
+  {% csrf_token %}
+  <button type="submit">Logout</button>
+</form>
+
 {% if albums %}
   <h2>Albums</h2>
   <ul>
@@ -16,7 +21,21 @@
   <h2>Playlists</h2>
   <ul>
     {% for p in playlists %}
-      <li>{{ p.name }}</li>
+      <li>
+        <strong>{{ p.name }}</strong>
+        <ul>
+          {% for s in p.songs.all %}
+            <li>
+              <a href="/songs/{{ s.id }}/">{{ s.title }}</a>
+              — {{ s.album.title }}
+            </li>
+          {% empty %}
+            <li>No songs in this playlist</li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% empty %}
+      <li>No playlists</li>
     {% endfor %}
   </ul>
 {% endif %}

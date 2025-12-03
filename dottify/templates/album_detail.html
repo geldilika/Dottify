@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <h1> {{ album.title }} </h1>
+
+{% if album.cover_image %}
+<img src="{{ album.cover_image.url }}" alt="{{ album.title }} cover" style="max-width: 200px; height: auto;">
+{% endif %}
 <h2> Songs </h2>
 <ul>
     {% for s in songs %}

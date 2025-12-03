@@ -20,7 +20,7 @@ album_router = routers.NestedSimpleRouter(router, r'albums', lookup='album')
 album_router.register(r'songs', NestedSongViewSet, basename='album_songs')
 
 urlpatterns = [
-        path("", home, name="home"),
+    path("", home, name="home"),
 
     path("albums/search/", album_search, name="album_search"),
     path("albums/new/", AlbumCreateView.as_view(), name="album_create"),
