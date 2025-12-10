@@ -1,9 +1,14 @@
-<!DOCTYPE html>
-<h1> Album Form </h1>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1 class="text-center">{% trans "Album Form" %}</h1>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table>
         {{ form }}
     </table>
-    <button type="submit">Save</button>
+    <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
+    <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
 </form>
+{% endblock %}

@@ -1,18 +1,20 @@
-<!doctype html>
-<h1>Album search</h1>
+{% extends "base.html" %}
+{% load i18n %}
 
+{% block content %}
+<h1 class="text-center">{% trans "Album search" %}</h1>
 
 {% if q %}
-  <p>Results for: {{ q }}</p>
+  <p>{% trans "Results for" %}: {{ q }}</p>
 {% endif %}
 
-<ul>
+<ul class="list-group">
   {% for a in albums %}
-    <li>
+    <li class="list-group-item">
       <a href="{% url 'album_detail' a.id %}">{{ a.title }}</a>
     </li>
   {% empty %}
-    <li>No albums found.</li>
+    <li class="list-group-item">{% trans "No albums found." %}</li>
   {% endfor %}
 </ul>
-
+{% endblock %}

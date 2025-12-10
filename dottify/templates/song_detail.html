@@ -1,3 +1,30 @@
-<!doctype html>
-<h1>{{ object.title }}</h1>
-<p>Album: <a href="/albums/{{ object.album.id }}/">{{ object.album.title }}</a></p>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h1 class="card-title text-center">{{ object.title }}</h1>
+
+    <p>
+      <strong>{% trans "Album" %}:</strong>
+      <a href="{% url 'album_detail' object.album.id %}">{{ object.album.title }}</a>
+    </p>
+
+      <a href="{% url 'album_detail' object.album.id %}" class="btn btn-outline-primary">
+        {% trans "Back to album" %}
+      </a>
+      <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+        {% trans "Back to home" %}
+      </a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'song_edit' object.pk %}" class="btn btn-outline-primary me-2">
+        Edit song
+        </a>
+        <a href="{% url 'song_delete' object.pk %}" class="btn btn-outline-danger">
+        Delete song
+        </a>
+      {% endif %}
+  </div>
+</div>
+{% endblock %}

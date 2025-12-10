@@ -1,27 +1,33 @@
-<!doctype html>
-<h1>{{ profile.display_name }}</h1>
+{% extends "base.html" %}
+{% load i18n %}
 
-<h2>Playlists</h2>
-{% if playlists %}
-  <ul>
-    {% for p in playlists %}
-      <li>
-        <strong>{{ p.name }}</strong>
-        {% if p.songs.all %}
-          <ul>
-            {% for s in p.songs.all %}
-              <li>
-                <a href="{% url 'song_detail' s.pk %}">{{ s.title }}</a>
-                (from <a href="{% url 'album_detail' s.album.pk %}">{{ s.album.title }}</a>)
-              </li>
-            {% empty %}
-              <li>No songs in this playlist.</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No playlists found.</p>
-{% endif %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h1 class="card-title" class="text-center">{{ profile.display_name }}</h1>
+
+    <h2>{% trans "Playlists" %}</h2>
+    {% if playlists %}
+      <ul class="list-group">
+        {% for p in playlists %}
+          <li class="list-group-item">
+            <strong>{{ p.name }}</strong>
+            <ul>
+              {% for s in p.songs.all %}
+                <li>
+                  <a href="{% url 'song_detail' s.pk %}">{{ s.title }}</a>
+                  (from <a href="{% url 'album_detail' s.album.pk %}">{{ s.album.title }}</a>)
+                </li>
+              {% empty %}
+                <li>{% trans "No songs in this playlist." %}</li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>{% trans "No playlists found." %}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

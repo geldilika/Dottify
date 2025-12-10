@@ -1,16 +1,29 @@
-<!doctype html>
-<h1>Home</h1>
+{% extends "base.html" %}
+{% load i18n %}
 
+{% block content %}
+
+<h1 class="text-center">{% trans "Home" %}</h1>
+
+{% if user.is_authenticated %}
 <form method="post" action="/accounts/logout/">
   {% csrf_token %}
-  <button type="submit">Logout</button>
+  <button type="submit" class="btn btn-secondary">{% trans "Logout" %}</button>
 </form>
+{% else %}
+  <a href="{% url 'login' %}" class="btn btn-primary mb-3">Login</a> 
+{% endif %}
 
 {% if albums %}
-  <h2>Albums</h2>
-  <ul>
+  <h2>{% trans "Albums" %}</h2>
+  <ul class="list-group">
     {% for a in albums %}
-      <li>
+      <li class="list-group-item">
+        {% if a.cover_image %}
+          <img src="{{ a.cover_image.url }}"
+               alt="{{ a.title }} cover"
+               style="width: 50px; height: 50px; object-fit: cover; margin-right: 8px;">
+        {% endif %}
         <a href="{% url 'album_detail' a.id %}">{{ a.title }}</a>
       </li>
     {% endfor %}
@@ -18,10 +31,10 @@
 {% endif %}
 
 {% if playlists %}
-  <h2>Playlists</h2>
-  <ul>
+  <h2>{% trans "Playlists" %}</h2>
+  <ul class="list-group">
     {% for p in playlists %}
-      <li>
+      <li class="list-group-item">
         <strong>{{ p.name }}</strong>
         <ul>
           {% for s in p.songs.all %}
@@ -30,27 +43,29 @@
               — {{ s.album.title }}
             </li>
           {% empty %}
-            <li>No songs in this playlist</li>
+            <li>{% trans "No songs in this playlist" %}</li>
           {% endfor %}
         </ul>
       </li>
     {% empty %}
-      <li>No playlists</li>
+      <li>{% trans "No playlists" %}</li>
     {% endfor %}
   </ul>
 {% endif %}
 
 {% if songs %}
-  <h2>Songs</h2>
+  <h2>{% trans "Songs" %}</h2>
 
   <p>Total results found: {{ songs|length }}</p>
 
-  <ul>
+  <ul class="list-group">
     {% for s in songs %}
-      <li>
+      <li class="list-group-item">
         <a href="{% url 'song_detail' s.id %}">{{ s.title }}</a>
         ({{ s.album.title }})
       </li>
     {% endfor %}
   </ul>
 {% endif %}
+
+{% endblock %}

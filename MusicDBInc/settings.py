@@ -157,4 +157,3 @@ MESSAGE_TAGS = {
 # Account redirects
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
-

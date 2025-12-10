@@ -81,6 +81,7 @@ class AlbumModelTests(TestCase):
         )
         self.assertRaises(IntegrityError, duplicate.save)
 
+
 class SongModelTests(TestCase):
     def setUp(self):
         self.album = Album.objects.create(
@@ -115,7 +116,9 @@ class SongModelTests(TestCase):
 
 class DottifyUserTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user("Geldi", "gl00610@surrey.ac.uk", "password")
+        self.user = User.objects.create_user(
+            "Geldi", "gl00610@surrey.ac.uk", "password"
+        )
         self.profile = DottifyUser.objects.create(
             user=self.user,
             display_name="gl00610",
@@ -128,7 +131,9 @@ class DottifyUserTests(TestCase):
 
 class PlaylistModelTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user("Geldi", "gl00610@surrey.ac.uk", "password")
+        self.user = User.objects.create_user(
+            "Geldi", "gl00610@surrey.ac.uk", "password"
+        )
         self.profile = DottifyUser.objects.create(
             user=self.user,
             display_name="gl00610",
@@ -160,6 +165,7 @@ class PlaylistModelTests(TestCase):
         assert p.songs.count() == 1
         assert self.song in p.songs.all()
 
+
 class RatingModelTests(TestCase):
     def setUp(self):
         self.album = Album.objects.create(
@@ -185,7 +191,9 @@ class RatingModelTests(TestCase):
 
 class CommentModelTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user("Geldi", "gl00610@surrey.ac.uk", "password")
+        self.user = User.objects.create_user(
+            "Geldi", "gl00610@surrey.ac.uk", "password"
+        )
         self.profile = DottifyUser.objects.create(
             user=self.user,
             display_name="gl00610",

@@ -1,10 +1,15 @@
-<!doctype html>
-<h1>Login</h1>
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans "Login" %}</h1>
 <form method="post" action="">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Log in</button>
+  <button type="submit" class="btn btn-secondary">{% trans "Login" %}</button>
   <input type="hidden" name="next" value="{{ next }}">
 </form>
 
-<p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+<p><a href="{% url 'password_reset' %}">{% trans "Forgot password?" %}</a></p>
+{% endblock %}

@@ -160,8 +160,7 @@ class ViewAndAuthTests(TestCase):
         self.assertEqual(playlists.count(), Playlist.objects.count())
         self.assertEqual(songs.count(), Song.objects.count())
 
-
-    def test_album_search_returns_only_matching_titles_for_logged_in_user(self):
+    def test_album_search_return_only_matching_title_for_logged_in_user(self):
         Album.objects.create(
             title="Testing Q",
             artist_name="Artist",
@@ -191,7 +190,7 @@ class ViewAndAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
-    def test_artist_creating_album_means_artist_account_equal_dottify_user(self):
+    def test_artist_creating_album_artist_account_equal_dottify_user(self):
         self.client.login(username="artist", password="password")
         response = self.client.post(
             reverse("album_create"),
@@ -335,7 +334,10 @@ class ViewAndAuthTests(TestCase):
         self.client.logout()
 
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Album.objects.filter(pk=self.artist_album.pk).exists())
+        self.assertFalse(
+            Album.objects.filter(pk=self.artist_album.pk)
+            .exists()
+        )
 
     def test_album_delete_admin_can_delete_any_album(self):
         self.client.login(username="admin", password="password")
@@ -346,7 +348,6 @@ class ViewAndAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Album.objects.filter(pk=self.other_album.pk).exists())
-
 
     def test_normal_user_can_not_delete(self):
         self.client.login(username="normal", password="password")
@@ -376,7 +377,6 @@ class ViewAndAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Song.objects.filter(pk=self.other_song.pk).exists())
-
 
     def test_album_detail_shows_songs_comments_rating_and_cover_image(self):
         url = reverse("album_detail", kwargs={"pk": self.artist_album.pk})
@@ -440,4 +440,3 @@ class ViewAndAuthTests(TestCase):
 
         self.assertIsNotNone(public)
         self.assertGreater(public.songs.count(), 0)
-    

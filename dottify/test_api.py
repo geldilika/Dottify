@@ -26,7 +26,9 @@ class APITests(APITestCase):
             length=240,
         )
 
-        u = User.objects.create_user("Geldi", "gl00610@surrey.ac.uk", "password")
+        u = User.objects.create_user(
+            "Geldi", "gl00610@surrey.ac.uk", "password"
+        )
         self.dottify_user = DottifyUser.objects.create(
             user=u,
             display_name="gl00610",
@@ -35,7 +37,7 @@ class APITests(APITestCase):
         self.public_playlist = Playlist.objects.create(
             name="Public",
             owner=self.dottify_user,
-            visibility=2, 
+            visibility=2,
         )
         self.public_playlist.songs.add(self.song1, self.song2)
 
@@ -46,7 +48,6 @@ class APITests(APITestCase):
         )
         self.hidden_playlist.songs.add(self.song1)
 
-
     def test_album_api_hides_artist_account_and_has_song_titles(self):
         url = f"/api/albums/{self.album.id}/"
         response = self.client.get(url)
@@ -56,7 +57,10 @@ class APITests(APITestCase):
         self.assertNotIn("artist_account", data)
 
         self.assertIn("song_set", data)
-        self.assertEqual(sorted(data["song_set"]), ["First Track", "Second Track"])
+        self.assertEqual(
+            sorted(data["song_set"]),
+            ["First Track", "Second Track"]
+        )
 
     def test_song_api_does_not_expose_position(self):
         url = f"/api/songs/{self.song1.id}/"
@@ -79,7 +83,7 @@ class APITests(APITestCase):
         names = []
         for p in data:
             names.append(p["name"])
-        
+
         self.assertIn("Public", names)
         self.assertNotIn("Hidden", names)
 
@@ -128,13 +132,13 @@ class APITests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_statistics_api_has_expected_keys_and_counts(self):
         response = self.client.get("/api/statistics/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
 
-        for key in ["playlist_count", "user_count", "album_count", "song_length_average"]:
+        for key in ["playlist_count", "user_count",
+                    "album_count", "song_length_average"]:
             self.assertIn(key, data)
 
         self.assertEqual(data["playlist_count"], 1)

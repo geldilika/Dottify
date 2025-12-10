@@ -1,9 +1,31 @@
-<!DOCTYPE html>
-<h1> Delete Album </h1>
-<p>
-    Delete {{ object.title }}
-</p>
-<form method = "post">
-    {% csrf_token %}
-    <button type="submit"> Confirm delete</button>
-</form>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1 class="text-center">{% trans "Delete Album" %}</h1>
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">{% trans "Delete" %} {{ object.title }}</h2>
+
+    {% if album.cover_image %}
+        <img src="{{ album.cover_image.url }}" alt="{{ album.title }} cover" style="max-width: 200px; height: auto;">
+        {% endif %}
+        <h2> {% trans "Songs" %} </h2>
+        <ul class="list-group">
+            {% for s in songs %}
+            <li class = "list-group-item">
+                <a href="/songs/{{ s.id }}/">{{ s.title }}</a>
+            </li>
+            {% empty %}
+            <li class="list-group-item">{% trans "No songs for this album." %}</li>
+            {% endfor %}
+        </ul>
+
+    <form method = "post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger"> {% trans "Confirm delete" %}</button>
+        <a href="{% url 'album_detail' object.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+    </div>
+</div>
+{% endblock %}
