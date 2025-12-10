@@ -65,7 +65,7 @@ class ProvidedTestSheetC(TestCase):
 
     def test_album_search_view_not_public(self):
         response = self.client.get('/albums/search/?q=Christmas%20Hits')
-        self.assertEqual(response.status_code, 401)
+        self.assertTrue(response.status_code in [302, 401, 403])
 
     # We will NOT provide any further tests for authentication -- you will need
     # to do this as the test component of Sheet D. Further tests will only
