@@ -1,0 +1,15 @@
+image: python:3.12-bookworm
+
+check-submission:
+  script:
+      - apt update
+      - apt install -y gettext
+      - python3 -m pip install -U pip
+      - python3 -m pip install -r requirements.txt
+      - python3 manage.py compilemessages
+      - python3 manage.py makemigrations
+      - python3 manage.py migrate
+      - python3 manage.py bootstrap
+      - python3 manage.py test
+  only:
+    - main
